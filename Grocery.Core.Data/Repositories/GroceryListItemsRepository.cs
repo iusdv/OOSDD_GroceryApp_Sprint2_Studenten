@@ -5,50 +5,55 @@ namespace Grocery.Core.Data.Repositories
 {
     public class GroceryListItemsRepository : IGroceryListItemsRepository
     {
-        private readonly List<GroceryListItem> groceryListItems;
+        private readonly List<GroceryListItem> _items;
+        private int _nextId;
 
         public GroceryListItemsRepository()
         {
-            groceryListItems = [
+            _items = new List<GroceryListItem>
+            {
                 new GroceryListItem(1, 1, 1, 3),
                 new GroceryListItem(2, 1, 2, 1),
                 new GroceryListItem(3, 1, 3, 4),
                 new GroceryListItem(4, 2, 1, 2),
                 new GroceryListItem(5, 2, 2, 5),
-            ];
-        }
+            };
 
-        public List<GroceryListItem> GetAll()
-        {
-            return groceryListItems;
+            _nextId = _items.Max(g => g.Id) + 1;
         }
+        public List<GroceryListItem> GetAll() => _items.ToList();
 
-        public List<GroceryListItem> GetAllOnGroceryListId(int id)
-        {
-            return groceryListItems.Where(g => g.GroceryListId == id).ToList();
-        }
+        public GroceryListItem? Get(int id) => _items.FirstOrDefault(i => i.Id == id);
 
         public GroceryListItem Add(GroceryListItem item)
         {
-            int newId = groceryListItems.Max(g => g.Id) + 1;
-            item.Id = newId;
-            groceryListItems.Add(item);
-            return Get(item.Id);
-        }
-
-        public GroceryListItem? Delete(GroceryListItem item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public GroceryListItem? Get(int id)
-        {
-            return groceryListItems.FirstOrDefault(g => g.Id == id);
+            if (item.Id <= 0) item.Id = _nextId++;
+            _items.Add(item);
+            return item;
         }
 
         public GroceryListItem? Update(GroceryListItem item)
         {
-            throw new NotImplementedException();
+            if (item.Id <= 0) throw new ArgumentException("Update needs Id > 0", nameof(item));
+            var idx = _items.FindIndex(i => i.Id == item.Id);
+            if (idx < 0) return null;
+            // replace stored entity with updated one is fine here
+            _items[idx] = item;
+            return item;
+        }
+        public GroceryListItem? Delete(GroceryListItem item)
+        {
+            var idx = _items.FindIndex(i => i.Id == item.Id);
+            if (idx < 0) return null;
+
+            var removed = _items[idx];
+            _items.RemoveAt(idx);
+            return removed;
+        }
+
+        public List<GroceryListItem> GetAllOnGroceryListId(int id)
+        {
+            return _items.Where(g => g.GroceryListId == id).ToList();
         }
     }
 }

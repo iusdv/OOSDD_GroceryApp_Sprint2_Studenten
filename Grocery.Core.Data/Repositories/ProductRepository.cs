@@ -1,45 +1,54 @@
-﻿using Grocery.Core.Interfaces.Repositories;
+﻿// Grocery.Core.Data.Repositories/ProductRepository.cs
+using Grocery.Core.Interfaces.Repositories;
 using Grocery.Core.Models;
 
 namespace Grocery.Core.Data.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly List<Product> products;
+        private readonly List<Product> _items;
+        private int _nextId;
+
         public ProductRepository()
         {
-            products = [
+            _items = new List<Product>
+            {
                 new Product(1, "Melk", 300),
                 new Product(2, "Kaas", 100),
                 new Product(3, "Brood", 400),
-                new Product(4, "Cornflakes", 0)];
-        }
-        public List<Product> GetAll()
-        {
-            return products;
-        }
+                new Product(4, "Cornflakes", 0)
+            };
 
-        public Product? Get(int id)
-        {
-            return products.FirstOrDefault(p => p.Id == id);
+            _nextId = _items.Max(p => p.Id) + 1;
         }
-
-        public Product Add(Product item)
+        public List<Product> GetAll() => _items.ToList();
+        public Product? Get(int id) => _items.FirstOrDefault(p => p.Id == id);
+        public Product Add(Product product)
         {
-            throw new NotImplementedException();
-        }
-
-        public Product? Delete(Product item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Product? Update(Product item)
-        {
-            Product? product = products.FirstOrDefault(p => p.Id == item.Id);
-            if (product == null) return null;
-            product.Id = item.Id;
+            if (product.Id <= 0) product.Id = _nextId++;
+            _items.Add(product);
             return product;
+        }
+        public Product? Update(Product product)
+        {
+            if (product.Id <= 0)
+                throw new ArgumentException("Update requires Id > 0", nameof(product));
+
+            var existing = _items.FirstOrDefault(p => p.Id == product.Id);
+            if (existing is null) return null;
+            existing.Name  = product.Name;
+            existing.Stock = product.Stock;
+
+            return existing;
+        }
+        public Product? Delete(Product product)
+        {
+            var idx = _items.FindIndex(p => p.Id == product.Id);
+            if (idx < 0) return null;
+
+            var removed = _items[idx];
+            _items.RemoveAt(idx);
+            return removed;
         }
     }
 }
