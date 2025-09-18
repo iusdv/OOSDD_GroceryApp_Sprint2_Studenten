@@ -1,14 +1,22 @@
-﻿
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
 namespace Grocery.Core.Models
 {
-    public partial class Client : Model
+    public partial class Client
     {
-        private string _emailAddress;
-        private string _password { get; set; }
-        public Client(int id, string name, string emailAddress, string password) : base(id, name)
+        public int Id { get; set; }
+
+        public string Name { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        
+        public Client(int id, string name, string email, string password)
         {
-            _emailAddress=emailAddress;
-            _password=password;
+            Id = id;
+            Name = name;
+            Email = email;
+            Password = password;
         }
     }
 }
