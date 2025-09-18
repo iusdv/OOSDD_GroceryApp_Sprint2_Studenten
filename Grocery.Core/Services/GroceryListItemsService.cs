@@ -26,7 +26,6 @@ namespace Grocery.Core.Services
 
         public List<GroceryListItem> GetAllOnGroceryListId(int groceryListId)
         {
-            // If your repo has a filtered method, prefer that. Otherwise filter here.
             var list = _groceriesRepository.GetAll()
                                            .Where(g => g.GroceryListId == groceryListId)
                                            .ToList();
@@ -37,7 +36,6 @@ namespace Grocery.Core.Services
         public GroceryListItem Add(GroceryListItem item)
         {
             var added = _groceriesRepository.Add(item);
-            // hydrate Product so callers who show names don’t see “None”
             added.Product = _productRepository.Get(added.ProductId) ?? new(0, "", 0);
             return added;
         }

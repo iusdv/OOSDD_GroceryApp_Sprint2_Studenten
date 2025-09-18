@@ -37,7 +37,6 @@ namespace Grocery.Core.Data.Repositories
             if (item.Id <= 0) throw new ArgumentException("Update needs Id > 0", nameof(item));
             var idx = _items.FindIndex(i => i.Id == item.Id);
             if (idx < 0) return null;
-            // replace stored entity with updated one is fine here
             _items[idx] = item;
             return item;
         }

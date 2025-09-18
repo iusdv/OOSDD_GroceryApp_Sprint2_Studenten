@@ -1,5 +1,4 @@
-﻿
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Grocery.Core.Interfaces.Services;
 using Grocery.Core.Models;
@@ -9,37 +8,37 @@ namespace Grocery.App.ViewModels
     public partial class LoginViewModel : BaseViewModel
     {
         private readonly IAuthService _authService;
-        private readonly GlobalViewModel _global;
 
-        [ObservableProperty]
-        private string email = "user3@mail.com";
+        [ObservableProperty] private string email = string.Empty;
+        [ObservableProperty] private string password = string.Empty;
+        [ObservableProperty] private string? loginMessage = string.Empty; 
 
-        [ObservableProperty]
-        private string password = "user3";
-
-        [ObservableProperty]
-        private string loginMessage;
-
-        public LoginViewModel(IAuthService authService, GlobalViewModel global)
-        { //_authService = App.Services.GetServices<IAuthService>().FirstOrDefault();
+        public LoginViewModel(IAuthService authService)
+        {
             _authService = authService;
-            _global = global;
         }
 
         [RelayCommand]
-        private void Login()
+        private async Task Login()
         {
-            Client? authenticatedClient = _authService.Login(Email, Password);
-            if (authenticatedClient != null)
+            LoginMessage = null;
+
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
-                LoginMessage = $"Welkom {authenticatedClient.Name}!";
-                _global.Client = authenticatedClient;
-                Application.Current.MainPage = new AppShell();
+                LoginMessage = "Vul e-mail en wachtwoord in.";
+                return;
             }
-            else
+
+            // Login Auth
+            Client? client = _authService.Login(Email, Password);
+            if (client is null)
             {
-                LoginMessage = "Ongeldige inloggegevens.";
+                LoginMessage = "Onjuist e-mailadres of wachtwoord.";
+                return;
             }
+            
+            Application.Current.MainPage = new AppShell();
+            await Task.CompletedTask;
         }
     }
 }

@@ -101,10 +101,8 @@ namespace Grocery.App.ViewModels
         [RelayCommand]
         public void AddProduct(Product productFromUi)
         {
-            // Safety + no double taps
             if (productFromUi is null || productFromUi.Id <= 0) return;
-
-            // Work on the canonical product (single source of truth)
+            
             var fresh = _productService.Get(productFromUi.Id);
             if (fresh is null || fresh.Stock <= 0) return;
             
