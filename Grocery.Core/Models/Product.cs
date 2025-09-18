@@ -6,10 +6,9 @@ namespace Grocery.Core.Models
     {
         [ObservableProperty]
         private int stock;
-
-        public Product(int id, string name, int stock) : base(id, name)
-        {
-            this.stock = stock;
-        }
+        public Product(int id, string name, int stock) : base(id, name) => this.stock = stock;
+        
+            
+        
     }
 }

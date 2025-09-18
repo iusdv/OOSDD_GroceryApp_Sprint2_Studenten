@@ -9,7 +9,15 @@
     xmlns:vm="clr-namespace:Grocery.App.ViewModels">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Wijzig kleur" Command="{Binding ChangeColorCommand}" IconImageSource="{FontImage Glyph='&#xf30c;', Color=Black, Size=22}" />
+        <ToolbarItem Text="Wijzig kleur"
+                     Order="Primary"
+                     Command="{Binding ChangeColorCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="&#xE790;"
+                                 FontFamily="Segoe MDL2 Assets"
+                                 Size="20" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
     
     <Shell.TitleView>
